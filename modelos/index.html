@@ -1,0 +1,1383 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Classificação de renda (>50K / <=50K) com Regressão Logística e Random Forest, avaliação e explicabilidade (SHAP).">
+      
+      
+        <meta name="author" content="Hector Mathias e Giovanni Rodrigues">
+      
+      
+        <link rel="canonical" href="https://Giovanni-CR7.github.io/aps2-classificacao-adult-income/modelos/">
+      
+      
+        <link rel="prev" href="../dados/">
+      
+      
+        <link rel="next" href="../avaliacao/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Modelos - APS2 — Classificação | Adult Income Census</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#1-selecao-e-implementacao-dos-modelos" class="md-skip">
+          Pular para conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href=".." title="APS2 — Classificação | Adult Income Census" class="md-header__button md-logo" aria-label="APS2 — Classificação | Adult Income Census" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            APS2 — Classificação | Adult Income Census
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Modelos
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Modo escuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Modo escuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: slate)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando busca
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Giovanni-CR7/aps2-classificacao-adult-income" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Abas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Início
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../dados/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Dados e métrica
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Modelos
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../avaliacao/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Avaliação no teste
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../interpretabilidade/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Interpretabilidade
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../discussao/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Discussão crítica
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../referencias/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Referências
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="APS2 — Classificação | Adult Income Census" class="md-nav__button md-logo" aria-label="APS2 — Classificação | Adult Income Census" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    APS2 — Classificação | Adult Income Census
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Giovanni-CR7/aps2-classificacao-adult-income" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Início
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dados/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dados e métrica
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Modelos
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Modelos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#10-pipeline-de-pre-processamento-v1-o-da-aps1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.0 Pipeline de pré-processamento (v1 = o da APS1)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-tres-modelos-distintos-hiperparametros-padrao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Três modelos distintos (hiperparâmetros padrão)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-selecao-de-hiperparametros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Seleção de hiperparâmetros
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-mudanca-no-pipeline-remover-fnlwgt-pipeline-v2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Mudança no pipeline: remover fnlwgt (pipeline v2)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-curvas-de-aprendizado-do-melhor-modelo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.4 Curvas de aprendizado do melhor modelo
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../avaliacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Avaliação no teste
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../interpretabilidade/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Interpretabilidade
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../discussao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Discussão crítica
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../referencias/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Referências
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#10-pipeline-de-pre-processamento-v1-o-da-aps1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.0 Pipeline de pré-processamento (v1 = o da APS1)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-tres-modelos-distintos-hiperparametros-padrao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Três modelos distintos (hiperparâmetros padrão)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-selecao-de-hiperparametros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Seleção de hiperparâmetros
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-mudanca-no-pipeline-remover-fnlwgt-pipeline-v2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Mudança no pipeline: remover fnlwgt (pipeline v2)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-curvas-de-aprendizado-do-melhor-modelo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.4 Curvas de aprendizado do melhor modelo
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="1-selecao-e-implementacao-dos-modelos">1. Seleção e implementação dos modelos<a class="headerlink" href="#1-selecao-e-implementacao-dos-modelos" title="Permanent link">&para;</a></h1>
+<h2 id="10-pipeline-de-pre-processamento-v1-o-da-aps1">1.0 Pipeline de pré-processamento (v1 = o da APS1)<a class="headerlink" href="#10-pipeline-de-pre-processamento-v1-o-da-aps1" title="Permanent link">&para;</a></h2>
+<p>Mesmas decisões da APS1: <code>fnlwgt</code> com <code>log1p</code> + padronização; <code>age</code> e <code>education.num</code> padronizadas; categóricas com imputação pela categoria explícita <code>"Missing"</code> e one-hot (<code>handle_unknown="ignore"</code>). O pré-processador é colocado <strong>dentro</strong> do <code>Pipeline</code> com o modelo, assim, na validação cruzada, ele é re-ajustado só com o fold de treino (sem <em>data leakage</em>).</p>
+<details class="example">
+<summary>Ver código</summary>
+<div class="highlight"><pre><span></span><code><span class="n">cat_features</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"workclass"</span><span class="p">,</span> <span class="s2">"marital.status"</span><span class="p">,</span> <span class="s2">"occupation"</span><span class="p">,</span> <span class="s2">"relationship"</span><span class="p">,</span> <span class="s2">"race"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">,</span> <span class="s2">"native.country"</span><span class="p">]</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">build_preprocessor</span><span class="p">(</span><span class="n">usar_fnlwgt</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="c1"># Constrói o pré-processador. usar_fnlwgt=False gera a variante v2 (Seção 1.3).</span>
+    <span class="n">fnlwgt_pipe</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+        <span class="p">(</span><span class="s2">"log"</span><span class="p">,</span> <span class="n">FunctionTransformer</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">,</span> <span class="n">feature_names_out</span><span class="o">=</span><span class="s2">"one-to-one"</span><span class="p">)),</span>
+        <span class="p">(</span><span class="s2">"scaler"</span><span class="p">,</span> <span class="n">StandardScaler</span><span class="p">()),</span>
+    <span class="p">])</span>
+    <span class="n">cat_pipe</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+        <span class="p">(</span><span class="s2">"imputer"</span><span class="p">,</span> <span class="n">SimpleImputer</span><span class="p">(</span><span class="n">strategy</span><span class="o">=</span><span class="s2">"constant"</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="s2">"Missing"</span><span class="p">)),</span>
+        <span class="p">(</span><span class="s2">"onehot"</span><span class="p">,</span> <span class="n">OneHotEncoder</span><span class="p">(</span><span class="n">handle_unknown</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">)),</span>
+    <span class="p">])</span>
+    <span class="n">transformers</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">"num"</span><span class="p">,</span> <span class="n">Pipeline</span><span class="p">([(</span><span class="s2">"scaler"</span><span class="p">,</span> <span class="n">StandardScaler</span><span class="p">())]),</span> <span class="p">[</span><span class="s2">"age"</span><span class="p">,</span> <span class="s2">"education.num"</span><span class="p">]),</span>
+                    <span class="p">(</span><span class="s2">"cat"</span><span class="p">,</span> <span class="n">cat_pipe</span><span class="p">,</span> <span class="n">cat_features</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="n">usar_fnlwgt</span><span class="p">:</span>
+        <span class="n">transformers</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="s2">"fnlwgt"</span><span class="p">,</span> <span class="n">fnlwgt_pipe</span><span class="p">,</span> <span class="p">[</span><span class="s2">"fnlwgt"</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">ColumnTransformer</span><span class="p">(</span><span class="n">transformers</span><span class="p">)</span>
+
+<span class="n">preprocessor_v1</span> <span class="o">=</span> <span class="n">build_preprocessor</span><span class="p">(</span><span class="n">usar_fnlwgt</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">preprocessor_v1</span>
+</code></pre></div>
+</details>
+<details class="note">
+<summary>Estrutura do pré-processador (v1)</summary>
+<div class="highlight"><pre><span></span><code>ColumnTransformer(transformers=[('fnlwgt',
+                                 Pipeline(steps=[('log',
+                                                  FunctionTransformer(feature_names_out='one-to-one',
+                                                                      func=&lt;ufunc 'log1p'&gt;)),
+                                                 ('scaler', StandardScaler())]),
+                                 ['fnlwgt']),
+                                ('num',
+                                 Pipeline(steps=[('scaler', StandardScaler())]),
+                                 ['age', 'education.num']),
+                                ('cat',
+                                 Pipeline(steps=[('imputer',
+                                                  SimpleImputer(fill_value='Missing',
+                                                                strategy='constant')),
+                                                 ('onehot',
+                                                  OneHotEncoder(handle_unknown='ignore'))]),
+                                 ['workclass', 'marital.status', 'occupation',
+                                  'relationship', 'race', 'sex',
+                                  'native.country'])])
+</code></pre></div>
+</details>
+<h2 id="11-tres-modelos-distintos-hiperparametros-padrao">1.1 Três modelos distintos (hiperparâmetros padrão)<a class="headerlink" href="#11-tres-modelos-distintos-hiperparametros-padrao" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Dummy</strong> (<code>most_frequent</code>): sempre prevê a classe majoritária. É o piso: qualquer modelo real precisa superá-lo.</li>
+<li><strong>Regressão Logística</strong> (modelo linear com regularização L2 por padrão): coeficientes interpretáveis, rápida, e a regularização controla overfitting.</li>
+<li><strong>Random Forest</strong> (<strong>ensemble de árvores</strong>): captura interações e não-linearidades (por exemplo, <code>estado civil × idade × escolaridade</code>) sem precisar de escala.</li>
+</ul>
+<details class="example">
+<summary>Ver código</summary>
+<div class="highlight"><pre><span></span><code><span class="n">modelos_base</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"Dummy"</span><span class="p">:</span> <span class="n">DummyClassifier</span><span class="p">(</span><span class="n">strategy</span><span class="o">=</span><span class="s2">"most_frequent"</span><span class="p">),</span>
+    <span class="s2">"LogReg"</span><span class="p">:</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="mi">2000</span><span class="p">),</span>
+    <span class="s2">"RandomForest"</span><span class="p">:</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>
+<span class="p">}</span>
+
+<span class="n">linhas</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">nome</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">modelos_base</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">pipe</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([(</span><span class="s2">"prep"</span><span class="p">,</span> <span class="n">preprocessor_v1</span><span class="p">),</span> <span class="p">(</span><span class="s2">"model"</span><span class="p">,</span> <span class="n">m</span><span class="p">)])</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">pipe</span><span class="p">,</span> <span class="n">X_train_proc</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">cv</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="n">SCORING</span><span class="p">)</span>
+    <span class="n">linhas</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">"Modelo"</span><span class="p">:</span> <span class="n">nome</span><span class="p">,</span> <span class="s2">"F1 (média CV)"</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="s2">"Desvio"</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">std</span><span class="p">()})</span>
+
+<span class="n">tabela_base</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">linhas</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">tabela_base</span>
+</code></pre></div>
+</details>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"></th>
+<th style="text-align: left;">Modelo</th>
+<th style="text-align: left;">F1 (média CV)</th>
+<th style="text-align: left;">Desvio</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">Dummy</td>
+<td style="text-align: left;">0.0000</td>
+<td style="text-align: left;">0.0000</td>
+</tr>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">LogReg</td>
+<td style="text-align: left;">0.6179</td>
+<td style="text-align: left;">0.0075</td>
+</tr>
+<tr>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">RandomForest</td>
+<td style="text-align: left;">0.6052</td>
+<td style="text-align: left;">0.0057</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Análise:</strong></p>
+<ul>
+<li><strong>Dummy:</strong> F1 = 0 em todos os folds, pois sempre prevê <code>&lt;=50K</code> e nunca acerta um <code>&gt;50K</code>. Sua <em>accuracy</em> seria ≈ 0,76 (proporção da classe majoritária), o que reforça por que a accuracy não serve como métrica aqui.</li>
+<li><strong>LogReg e RandomForest:</strong> desempenhos próximos (F1 = 0,6179 vs. 0,6052); ambos superam o Dummy com folga e variam pouco entre folds (σ ≈ 0,006–0,008). Com diferença de ~1 desvio-padrão, não se pode afirmar superioridade de um dos dois sem um teste pareado (feito na Seção 1.3).</li>
+</ul>
+<h2 id="12-selecao-de-hiperparametros">1.2 Seleção de hiperparâmetros<a class="headerlink" href="#12-selecao-de-hiperparametros" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Regressão Logística</strong> → <code>GridSearchCV</code> (espaço pequeno): <code>C</code> (inverso da força da regularização; menor <code>C</code> significa mais regularização) e <code>penalty</code> (L1 zera coeficientes, L2 os encolhe).</li>
+<li><strong>Random Forest</strong> → <code>RandomizedSearchCV</code> (espaço maior, amostrado): <code>n_estimators</code>, <code>max_depth</code>, <code>min_samples_leaf</code> e <code>max_features</code>. Limitar a profundidade e exigir mais amostras por folha reduz o overfitting.</li>
+</ul>
+<details class="example">
+<summary>Ver código</summary>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">make_search</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="n">preprocessor</span><span class="p">):</span>
+    <span class="c1"># Cria a busca de hiperparâmetros para 'LogReg' ou 'RandomForest' com o pré-processador dado.</span>
+    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">"LogReg"</span><span class="p">:</span>
+        <span class="n">pipe</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([(</span><span class="s2">"prep"</span><span class="p">,</span> <span class="n">preprocessor</span><span class="p">),</span>
+                         <span class="p">(</span><span class="s2">"model"</span><span class="p">,</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="s2">"liblinear"</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">2000</span><span class="p">))])</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"model__C"</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span> <span class="s2">"model__penalty"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"l1"</span><span class="p">,</span> <span class="s2">"l2"</span><span class="p">]}</span>
+        <span class="k">return</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">pipe</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">cv</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="n">SCORING</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">pipe</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([(</span><span class="s2">"prep"</span><span class="p">,</span> <span class="n">preprocessor</span><span class="p">),</span>
+                     <span class="p">(</span><span class="s2">"model"</span><span class="p">,</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">))])</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"model__n_estimators"</span><span class="p">:</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">300</span><span class="p">],</span>
+            <span class="s2">"model__max_depth"</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+            <span class="s2">"model__min_samples_leaf"</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span>
+            <span class="s2">"model__max_features"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"sqrt"</span><span class="p">,</span> <span class="s2">"log2"</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]}</span>
+    <span class="k">return</span> <span class="n">RandomizedSearchCV</span><span class="p">(</span><span class="n">pipe</span><span class="p">,</span> <span class="n">dist</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">cv</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="n">SCORING</span><span class="p">,</span>
+                              <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span><span class="p">)</span>
+
+<span class="n">gs_lr</span> <span class="o">=</span> <span class="n">make_search</span><span class="p">(</span><span class="s2">"LogReg"</span><span class="p">,</span> <span class="n">preprocessor_v1</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_proc</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">)</span>
+<span class="n">rs_rf</span> <span class="o">=</span> <span class="n">make_search</span><span class="p">(</span><span class="s2">"RandomForest"</span><span class="p">,</span> <span class="n">preprocessor_v1</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_proc</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"LogReg      | melhor F1 (CV):"</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">gs_lr</span><span class="o">.</span><span class="n">best_score_</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">"|"</span><span class="p">,</span> <span class="n">gs_lr</span><span class="o">.</span><span class="n">best_params_</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"RandomForest| melhor F1 (CV):"</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">rs_rf</span><span class="o">.</span><span class="n">best_score_</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">"|"</span><span class="p">,</span> <span class="n">rs_rf</span><span class="o">.</span><span class="n">best_params_</span><span class="p">)</span>
+</code></pre></div>
+</details>
+<div class="highlight"><pre><span></span><code>LogReg      | melhor F1 (CV): 0.6184 | {'model__C': 1, 'model__penalty': 'l2'}
+RandomForest| melhor F1 (CV): 0.6252 | {'model__n_estimators': 200, 'model__min_samples_leaf': 3, 'model__max_features': 0.3, 'model__max_depth': None}
+</code></pre></div>
+<details class="example">
+<summary>Ver código</summary>
+<div class="highlight"><pre><span></span><code><span class="n">resultados_v1</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"LogReg"</span><span class="p">:</span> <span class="n">gs_lr</span><span class="p">,</span> <span class="s2">"RandomForest"</span><span class="p">:</span> <span class="n">rs_rf</span><span class="p">}</span>
+<span class="n">melhor_nome</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">resultados_v1</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">resultados_v1</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">best_score_</span><span class="p">)</span>
+
+<span class="n">tabela_1</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span>
+    <span class="n">tabela_base</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"Modelo"</span><span class="p">)[</span><span class="s2">"F1 (média CV)"</span><span class="p">]</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">"Padrão"</span><span class="p">),</span>
+    <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">({</span><span class="s2">"Dummy"</span><span class="p">:</span> <span class="n">tabela_base</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s2">"F1 (média CV)"</span><span class="p">],</span>
+               <span class="s2">"LogReg"</span><span class="p">:</span> <span class="n">gs_lr</span><span class="o">.</span><span class="n">best_score_</span><span class="p">,</span> <span class="s2">"RandomForest"</span><span class="p">:</span> <span class="n">rs_rf</span><span class="o">.</span><span class="n">best_score_</span><span class="p">},</span> <span class="n">name</span><span class="o">=</span><span class="s2">"Otimizado"</span><span class="p">),</span>
+<span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">tabela_1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Melhor modelo até aqui:"</span><span class="p">,</span> <span class="n">melhor_nome</span><span class="p">)</span>
+</code></pre></div>
+</details>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"></th>
+<th style="text-align: left;">Padrão</th>
+<th style="text-align: left;">Otimizado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Dummy</td>
+<td style="text-align: left;">0.0000</td>
+<td style="text-align: left;">0.0000</td>
+</tr>
+<tr>
+<td style="text-align: left;">LogReg</td>
+<td style="text-align: left;">0.6179</td>
+<td style="text-align: left;">0.6184</td>
+</tr>
+<tr>
+<td style="text-align: left;">RandomForest</td>
+<td style="text-align: left;">0.6052</td>
+<td style="text-align: left;">0.6252</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code>Melhor modelo até aqui: RandomForest
+</code></pre></div>
+<details class="example">
+<summary>Ver código</summary>
+<div class="highlight"><pre><span></span><code><span class="c1"># Melhores configurações de cada busca: mostra se há um platô de desempenho (robustez da escolha)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">top_configs</span><span class="p">(</span><span class="n">busca</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">busca</span><span class="o">.</span><span class="n">cv_results_</span><span class="p">)</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"param_"</span><span class="p">)]</span> <span class="o">+</span> <span class="p">[</span><span class="s2">"mean_test_score"</span><span class="p">,</span> <span class="s2">"std_test_score"</span><span class="p">,</span> <span class="s2">"rank_test_score"</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"rank_test_score"</span><span class="p">)[</span><span class="n">cols</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"LogReg (GridSearchCV) - top 5"</span><span class="p">);</span> <span class="n">display</span><span class="p">(</span><span class="n">top_configs</span><span class="p">(</span><span class="n">gs_lr</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"RandomForest (RandomizedSearchCV) - top 5"</span><span class="p">);</span> <span class="n">display</span><span class="p">(</span><span class="n">top_configs</span><span class="p">(</span><span class="n">rs_rf</span><span class="p">))</span>
+</code></pre></div>
+</details>
+<div class="highlight"><pre><span></span><code>LogReg (GridSearchCV) - top 5
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"></th>
+<th style="text-align: left;">param_model__C</th>
+<th style="text-align: left;">param_model__penalty</th>
+<th style="text-align: left;">mean_test_score</th>
+<th style="text-align: left;">std_test_score</th>
+<th style="text-align: left;">rank_test_score</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">l2</td>
+<td style="text-align: left;">0.6184</td>
+<td style="text-align: left;">0.0071</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">l1</td>
+<td style="text-align: left;">0.6173</td>
+<td style="text-align: left;">0.0074</td>
+<td style="text-align: left;">2</td>
+</tr>
+<tr>
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">l1</td>
+<td style="text-align: left;">0.6173</td>
+<td style="text-align: left;">0.0074</td>
+<td style="text-align: left;">3</td>
+</tr>
+<tr>
+<td style="text-align: left;">7</td>
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">l2</td>
+<td style="text-align: left;">0.6173</td>
+<td style="text-align: left;">0.0074</td>
+<td style="text-align: left;">4</td>
+</tr>
+<tr>
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">l1</td>
+<td style="text-align: left;">0.6172</td>
+<td style="text-align: left;">0.0073</td>
+<td style="text-align: left;">5</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code>RandomForest (RandomizedSearchCV) - top 5
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"></th>
+<th style="text-align: left;">param_model__n_estimators</th>
+<th style="text-align: left;">param_model__min_samples_leaf</th>
+<th style="text-align: left;">param_model__max_features</th>
+<th style="text-align: left;">param_model__max_depth</th>
+<th style="text-align: left;">mean_test_score</th>
+<th style="text-align: left;">std_test_score</th>
+<th style="text-align: left;">rank_test_score</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">200</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">0.3</td>
+<td style="text-align: left;">None</td>
+<td style="text-align: left;">0.6252</td>
+<td style="text-align: left;">0.0057</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr>
+<td style="text-align: left;">9</td>
+<td style="text-align: left;">200</td>
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">0.3</td>
+<td style="text-align: left;">20</td>
+<td style="text-align: left;">0.6219</td>
+<td style="text-align: left;">0.0032</td>
+<td style="text-align: left;">2</td>
+</tr>
+<tr>
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">200</td>
+<td style="text-align: left;">20</td>
+<td style="text-align: left;">0.3</td>
+<td style="text-align: left;">20</td>
+<td style="text-align: left;">0.6186</td>
+<td style="text-align: left;">0.0061</td>
+<td style="text-align: left;">3</td>
+</tr>
+<tr>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">0.3</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">0.6156</td>
+<td style="text-align: left;">0.0114</td>
+<td style="text-align: left;">4</td>
+</tr>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">200</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">sqrt</td>
+<td style="text-align: left;">None</td>
+<td style="text-align: left;">0.6120</td>
+<td style="text-align: left;">0.0047</td>
+<td style="text-align: left;">5</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Análise do ajuste de hiperparâmetros (Padrão vs. Otimizado):</strong></p>
+<ul>
+<li><strong>Dummy:</strong> permanece em F1 = 0; é apenas o piso de comparação.</li>
+<li><strong>Regressão Logística (GridSearchCV, 10 combinações):</strong> 0,6179 → 0,6184 (+0,05 p.p.). Os melhores <code>C = 1</code> e <code>penalty = 'l2'</code> coincidem com o padrão; a pequena diferença vem da troca de solver (<code>lbfgs</code> → <code>liblinear</code>). Ganho desprezível: com estas features o modelo linear já está perto do seu teto.</li>
+<li><strong>Random Forest (RandomizedSearchCV, 12 de 225 combinações):</strong> 0,6052 → 0,6252 (+2,0 p.p.), ganho bem maior que o desvio entre folds (≈ 0,006), portanto provavelmente real. Melhor configuração: <code>n_estimators=200</code>, <code>max_depth=None</code>, <code>min_samples_leaf=3</code>, <code>max_features=0.3</code>.</li>
+<li><strong>Cautela na interpretação:</strong> como a busca amostrou só 12 combinações, não é possível atribuir o ganho a um único hiperparâmetro. Leitura plausível (hipótese, não resultado isolado): <code>min_samples_leaf=3</code> reduz a variância das folhas; <code>max_features=0.3</code> (≈ 26 colunas, contra ≈ 9 do <code>sqrt</code> num espaço de ~89 colunas após o one-hot) aumenta a diversidade entre as árvores; <code>max_depth=None</code> deixa capturar interações. A tabela das melhores configurações (célula acima) permite checar a robustez: se configurações vizinhas têm F1 parecido, o resultado não depende de um ajuste fino.</li>
+<li><strong>Comparação entre modelos:</strong> a RF otimizada (0,6252) fica 0,7 p.p. acima da LogReg (0,6184), cerca de 1 desvio-padrão. Adotamos a RF como melhor modelo por ter o maior F1 médio e maior capacidade de capturar não-linearidades, mas a vantagem é modesta; a Seção 1.3 a verifica de forma pareada.</li>
+</ul>
+<h2 id="13-mudanca-no-pipeline-remover-fnlwgt-pipeline-v2">1.3 Mudança no pipeline: remover <code>fnlwgt</code> (pipeline v2)<a class="headerlink" href="#13-mudanca-no-pipeline-remover-fnlwgt-pipeline-v2" title="Permanent link">&para;</a></h2>
+<p><strong>Proposta:</strong> retirar <code>fnlwgt</code> do conjunto de features.</p>
+<p><strong>Justificativa:</strong> baseado na EDA da APS1, vimos que <code>fnlwgt</code> é um peso amostral do censo (quantas pessoas da população cada linha representa), <strong>não</strong> uma característica do indivíduo. Na análise bivariada (<code>fnlwgt × workclass</code>) ele pouco diferenciou os grupos, e na análise numérica não teve relação com <code>income</code>. Mantê-lo pode acrescentar ruído e dar ao modelo uma variável sem sentido causal ou preditivo.</p>
+<p><strong>Hipótese:</strong> o desempenho se mantém ou melhora levemente, com um modelo mais simples. Para isolar o efeito, mudamos somente isso e refazemos a seleção de hiperparâmetros do melhor modelo, com a mesma métrica e a mesma validação.</p>
+<details class="example">
+<summary>Ver código</summary>
+<div class="highlight"><pre><span></span><code><span class="n">preprocessor_v2</span> <span class="o">=</span> <span class="n">build_preprocessor</span><span class="p">(</span><span class="n">usar_fnlwgt</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">busca_v2</span> <span class="o">=</span> <span class="n">make_search</span><span class="p">(</span><span class="n">melhor_nome</span><span class="p">,</span> <span class="n">preprocessor_v2</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_proc</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">)</span>
+
+<span class="n">comparacao</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">"Pipeline"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"v1 (com fnlwgt)"</span><span class="p">,</span> <span class="s2">"v2 (sem fnlwgt)"</span><span class="p">],</span>
+    <span class="s2">"Modelo"</span><span class="p">:</span> <span class="p">[</span><span class="n">melhor_nome</span><span class="p">,</span> <span class="n">melhor_nome</span><span class="p">],</span>
+    <span class="s2">"F1 (média CV)"</span><span class="p">:</span> <span class="p">[</span><span class="n">resultados_v1</span><span class="p">[</span><span class="n">melhor_nome</span><span class="p">]</span><span class="o">.</span><span class="n">best_score_</span><span class="p">,</span> <span class="n">busca_v2</span><span class="o">.</span><span class="n">best_score_</span><span class="p">],</span>
+<span class="p">})</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">comparacao</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Hiperparâmetros v2:"</span><span class="p">,</span> <span class="n">busca_v2</span><span class="o">.</span><span class="n">best_params_</span><span class="p">)</span>
+</code></pre></div>
+</details>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"></th>
+<th style="text-align: left;">Pipeline</th>
+<th style="text-align: left;">Modelo</th>
+<th style="text-align: left;">F1 (média CV)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">v1 (com fnlwgt)</td>
+<td style="text-align: left;">RandomForest</td>
+<td style="text-align: left;">0.6252</td>
+</tr>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">v2 (sem fnlwgt)</td>
+<td style="text-align: left;">RandomForest</td>
+<td style="text-align: left;">0.6262</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code>Hiperparâmetros v2: {'model__n_estimators': 200, 'model__min_samples_leaf': 3, 'model__max_features': 0.3, 'model__max_depth': None}
+</code></pre></div>
+<details class="example">
+<summary>Ver código</summary>
+<div class="highlight"><pre><span></span><code><span class="c1"># Escolha do modelo final: só adotamos a v2 se ela de fato melhorou o F1 de validação</span>
+<span class="k">if</span> <span class="n">busca_v2</span><span class="o">.</span><span class="n">best_score_</span> <span class="o">&gt;</span> <span class="n">resultados_v1</span><span class="p">[</span><span class="n">melhor_nome</span><span class="p">]</span><span class="o">.</span><span class="n">best_score_</span><span class="p">:</span>
+    <span class="n">busca_final</span><span class="p">,</span> <span class="n">versao_final</span> <span class="o">=</span> <span class="n">busca_v2</span><span class="p">,</span> <span class="s2">"v2 (sem fnlwgt)"</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">busca_final</span><span class="p">,</span> <span class="n">versao_final</span> <span class="o">=</span> <span class="n">resultados_v1</span><span class="p">[</span><span class="n">melhor_nome</span><span class="p">],</span> <span class="s2">"v1 (com fnlwgt)"</span>
+
+<span class="n">modelo_final</span> <span class="o">=</span> <span class="n">busca_final</span><span class="o">.</span><span class="n">best_estimator_</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Modelo final: </span><span class="si">{</span><span class="n">melhor_nome</span><span class="si">}</span><span class="s2"> | pipeline </span><span class="si">{</span><span class="n">versao_final</span><span class="si">}</span><span class="s2"> | F1 CV = </span><span class="si">{</span><span class="n">busca_final</span><span class="o">.</span><span class="n">best_score_</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+</details>
+<div class="highlight"><pre><span></span><code>Modelo final: RandomForest | pipeline v2 (sem fnlwgt) | F1 CV = 0.6262
+</code></pre></div>
+<details class="example">
+<summary>Ver código</summary>
+<div class="highlight"><pre><span></span><code><span class="c1"># Comparação pareada fold a fold (mesmos folds `cv`): a diferença é maior que o ruído entre folds?</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">comparar</span><span class="p">(</span><span class="n">nome_a</span><span class="p">,</span> <span class="n">est_a</span><span class="p">,</span> <span class="n">nome_b</span><span class="p">,</span> <span class="n">est_b</span><span class="p">):</span>
+    <span class="n">sa</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">est_a</span><span class="p">,</span> <span class="n">X_train_proc</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">cv</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="n">SCORING</span><span class="p">)</span>
+    <span class="n">sb</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">est_b</span><span class="p">,</span> <span class="n">X_train_proc</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">cv</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="n">SCORING</span><span class="p">)</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">sb</span> <span class="o">-</span> <span class="n">sa</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">nome_b</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">nome_a</span><span class="si">}</span><span class="s2">: diferença média = </span><span class="si">{</span><span class="n">d</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">+.4f</span><span class="si">}</span><span class="s2"> | desvio das diferenças = </span><span class="si">{</span><span class="n">d</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> "</span>
+          <span class="sa">f</span><span class="s2">"| folds em que </span><span class="si">{</span><span class="n">nome_b</span><span class="si">}</span><span class="s2"> &gt;= </span><span class="si">{</span><span class="n">nome_a</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="p">(</span><span class="n">d</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"  -&gt;"</span><span class="p">,</span> <span class="s2">"diferença dentro do ruído entre folds (modelos equivalentes)"</span> <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">&lt;</span> <span class="n">d</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+          <span class="k">else</span> <span class="s2">"diferença maior que o ruído entre folds"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="n">nome_a</span><span class="p">:</span> <span class="n">sa</span><span class="p">,</span> <span class="n">nome_b</span><span class="p">:</span> <span class="n">sb</span><span class="p">})</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="c1"># (a) Efeito da mudança de pipeline: v1 vs v2 (RF otimizada)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">comparar</span><span class="p">(</span><span class="s2">"RF v1"</span><span class="p">,</span> <span class="n">resultados_v1</span><span class="p">[</span><span class="n">melhor_nome</span><span class="p">]</span><span class="o">.</span><span class="n">best_estimator_</span><span class="p">,</span> <span class="s2">"RF v2"</span><span class="p">,</span> <span class="n">busca_v2</span><span class="o">.</span><span class="n">best_estimator_</span><span class="p">))</span>
+<span class="c1"># (b) Modelo: LogReg (v1) vs RF (v1)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">comparar</span><span class="p">(</span><span class="s2">"LogReg v1"</span><span class="p">,</span> <span class="n">gs_lr</span><span class="o">.</span><span class="n">best_estimator_</span><span class="p">,</span> <span class="s2">"RF v1"</span><span class="p">,</span> <span class="n">rs_rf</span><span class="o">.</span><span class="n">best_estimator_</span><span class="p">))</span>
+</code></pre></div>
+</details>
+<div class="highlight"><pre><span></span><code>RF v2 - RF v1: diferença média = +0.0010 | desvio das diferenças = 0.0071 | folds em que RF v2 &gt;= RF v1: 1/5
+  -&gt; diferença dentro do ruído entre folds (modelos equivalentes)
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"></th>
+<th style="text-align: left;">RF v1</th>
+<th style="text-align: left;">RF v2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0.6274</td>
+<td style="text-align: left;">0.6274</td>
+</tr>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">0.6236</td>
+<td style="text-align: left;">0.6183</td>
+</tr>
+<tr>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">0.6148</td>
+<td style="text-align: left;">0.6123</td>
+</tr>
+<tr>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">0.6286</td>
+<td style="text-align: left;">0.6434</td>
+</tr>
+<tr>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">0.6313</td>
+<td style="text-align: left;">0.6296</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code>RF v1 - LogReg v1: diferença média = +0.0067 | desvio das diferenças = 0.0054 | folds em que RF v1 &gt;= LogReg v1: 4/5
+  -&gt; diferença maior que o ruído entre folds
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"></th>
+<th style="text-align: left;">LogReg v1</th>
+<th style="text-align: left;">RF v1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0.6137</td>
+<td style="text-align: left;">0.6274</td>
+</tr>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">0.6251</td>
+<td style="text-align: left;">0.6236</td>
+</tr>
+<tr>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">0.6085</td>
+<td style="text-align: left;">0.6148</td>
+</tr>
+<tr>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">0.6172</td>
+<td style="text-align: left;">0.6286</td>
+</tr>
+<tr>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">0.6276</td>
+<td style="text-align: left;">0.6313</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Análise do impacto da mudança no pipeline (v1 vs. v2):</strong></p>
+<ul>
+<li><strong>Resultado:</strong> v1 (com <code>fnlwgt</code>) F1 = 0,6252; v2 (sem <code>fnlwgt</code>) F1 = 0,6262, diferença de +0,001. A mesma configuração de hiperparâmetros foi selecionada nas duas buscas.</li>
+<li><strong>Significância:</strong> a comparação pareada fold a fold (célula acima) compara a diferença média com o desvio das diferenças. Como o efeito observado (0,001) é muito menor que a variação entre folds (σ ≈ 0,006), a leitura correta é <strong>"sem perda de desempenho"</strong>, e não "melhora".</li>
+<li><strong>Decisão:</strong> adotamos a v2 por <strong>parcimônia</strong>: desempenho equivalente com um pré-processamento mais simples (sem <code>log1p</code> + padronização) e sem uma variável que não descreve o indivíduo. Isso é coerente com a EDA da APS1: <code>fnlwgt</code> é um peso amostral do censo, sem relação com <code>income</code> nem poder de separar grupos.</li>
+<li><strong>Consistência com a Seção 3.2:</strong> o <code>fnlwgt</code> aparece como 3ª feature mais "importante" na Random Forest v1 e, ainda assim, removê-lo não prejudica o modelo. Isso é o que se espera do viés conhecido da importância por impureza para variáveis contínuas de alta cardinalidade (Strobl et al., 2007).</li>
+<li><strong>Comparação LogReg vs. RF (pareada):</strong> a mesma célula verifica se a vantagem da RF supera o ruído entre folds.</li>
+</ul>
+<h2 id="14-curvas-de-aprendizado-do-melhor-modelo">1.4 Curvas de aprendizado do melhor modelo<a class="headerlink" href="#14-curvas-de-aprendizado-do-melhor-modelo" title="Permanent link">&para;</a></h2>
+<p>Mostram o F1 de treino e de validação conforme o tamanho do conjunto de treino aumenta. Leitura:</p>
+<ul>
+<li><strong>gap grande</strong> entre treino e validação → overfitting (variância alta);</li>
+<li><strong>ambas baixas e próximas</strong> → underfitting (viés alto);</li>
+<li><strong>validação já estabilizada</strong> → mais dados provavelmente trariam pouco ganho.</li>
+</ul>
+<details class="example">
+<summary>Ver código</summary>
+<div class="highlight"><pre><span></span><code><span class="n">tamanhos</span><span class="p">,</span> <span class="n">tr_sc</span><span class="p">,</span> <span class="n">va_sc</span> <span class="o">=</span> <span class="n">learning_curve</span><span class="p">(</span>
+    <span class="n">modelo_final</span><span class="p">,</span> <span class="n">X_train_proc</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">cv</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="n">SCORING</span><span class="p">,</span>
+    <span class="n">train_sizes</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span>
+<span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">sc</span><span class="p">,</span> <span class="n">nome</span><span class="p">,</span> <span class="n">cor</span> <span class="ow">in</span> <span class="p">[(</span><span class="n">tr_sc</span><span class="p">,</span> <span class="s2">"Treino"</span><span class="p">,</span> <span class="s2">"#2b5c8f"</span><span class="p">),</span> <span class="p">(</span><span class="n">va_sc</span><span class="p">,</span> <span class="s2">"Validação (CV)"</span><span class="p">,</span> <span class="s2">"#e07a5f"</span><span class="p">)]:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tamanhos</span><span class="p">,</span> <span class="n">sc</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="s2">"o-"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">nome</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">cor</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">tamanhos</span><span class="p">,</span> <span class="n">sc</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">sc</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+                     <span class="n">sc</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">sc</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">cor</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Curva de aprendizado: </span><span class="si">{</span><span class="n">melhor_nome</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">versao_final</span><span class="si">}</span><span class="s2">)"</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">"bold"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"Número de amostras de treino"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">"F1-score (classe &gt;50K)"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>
+</details>
+<p><img alt="Curva de aprendizado (Random Forest v2)" src="../assets/img/curva_aprendizado.png" /></p>
+<p><strong>Análise da curva de aprendizado (Random Forest v2):</strong></p>
+<ul>
+<li><strong>Variância:</strong> gap de ≈ 10 p.p. entre treino (≈ 0,72–0,75) e validação (≈ 0,61–0,63), que se mantém em todos os tamanhos. Indica sobreajuste moderado, esperado com <code>max_depth=None</code>; o <code>min_samples_leaf=3</code> o mantém controlado. A curva de treino cai levemente conforme há mais dados (menos memorização), mas a de validação não sobe.</li>
+<li><strong>Saturação:</strong> o F1 de validação é praticamente plano desde as menores amostras (~2.000) até ~20.000, oscilando dentro da faixa de ruído (±0,01). Mais dados do mesmo tipo trariam pouco ganho: o gargalo é a informação disponível nas features, não o volume.</li>
+<li><strong>Direções que atacariam o gargalo:</strong> features mais informativas, outros ensembles (Gradient Boosting) e ajuste do limiar de decisão para reequilibrar precision e recall.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Voltar para o topo
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.top", "toc.follow", "content.code.copy", "search.highlight"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "mais 1 nesta p\u00e1gina", "search.result.more.other": "# mais nesta p\u00e1gina", "search.result.none": "Nenhum documento encontrado", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

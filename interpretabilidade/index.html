@@ -1,0 +1,1138 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Classificação de renda (>50K / <=50K) com Regressão Logística e Random Forest, avaliação e explicabilidade (SHAP).">
+      
+      
+        <meta name="author" content="Hector Mathias e Giovanni Rodrigues">
+      
+      
+        <link rel="canonical" href="https://Giovanni-CR7.github.io/aps2-classificacao-adult-income/interpretabilidade/">
+      
+      
+        <link rel="prev" href="../avaliacao/">
+      
+      
+        <link rel="next" href="../discussao/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Interpretabilidade - APS2 — Classificação | Adult Income Census</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#3-interpretacao-e-explicabilidade" class="md-skip">
+          Pular para conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href=".." title="APS2 — Classificação | Adult Income Census" class="md-header__button md-logo" aria-label="APS2 — Classificação | Adult Income Census" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            APS2 — Classificação | Adult Income Census
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Interpretabilidade
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Modo escuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Modo escuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: slate)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando busca
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Giovanni-CR7/aps2-classificacao-adult-income" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Abas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Início
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../dados/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Dados e métrica
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../modelos/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Modelos
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../avaliacao/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Avaliação no teste
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Interpretabilidade
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../discussao/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Discussão crítica
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../referencias/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Referências
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="APS2 — Classificação | Adult Income Census" class="md-nav__button md-logo" aria-label="APS2 — Classificação | Adult Income Census" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    APS2 — Classificação | Adult Income Census
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Giovanni-CR7/aps2-classificacao-adult-income" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Início
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dados/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dados e métrica
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../modelos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Modelos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../avaliacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Avaliação no teste
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Interpretabilidade
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Interpretabilidade
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#31-modelo-linear-3-maiores-coeficientes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Modelo linear: 3 maiores coeficientes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#32-modelo-ensemble-3-features-de-maior-importancia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Modelo ensemble: 3 features de maior importância
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#33-shap-no-melhor-modelo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 SHAP no melhor modelo
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../discussao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Discussão crítica
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../referencias/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Referências
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#31-modelo-linear-3-maiores-coeficientes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Modelo linear: 3 maiores coeficientes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#32-modelo-ensemble-3-features-de-maior-importancia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Modelo ensemble: 3 features de maior importância
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#33-shap-no-melhor-modelo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 SHAP no melhor modelo
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="3-interpretacao-e-explicabilidade">3. Interpretação e explicabilidade<a class="headerlink" href="#3-interpretacao-e-explicabilidade" title="Permanent link">&para;</a></h1>
+<h2 id="31-modelo-linear-3-maiores-coeficientes">3.1 Modelo linear: 3 maiores coeficientes<a class="headerlink" href="#31-modelo-linear-3-maiores-coeficientes" title="Permanent link">&para;</a></h2>
+<p>Usamos a Regressão Logística otimizada da Seção 1.2. Coeficiente positivo → aumenta a chance de <code>&gt;50K</code>; negativo → diminui. <strong>Ressalva:</strong> as variáveis numéricas estão padronizadas e as categóricas são dummies 0/1, então a comparação direta de magnitudes é aproximada.</p>
+<details class="example">
+<summary>Ver código</summary>
+<div class="highlight"><pre><span></span><code><span class="n">lr_est</span> <span class="o">=</span> <span class="n">gs_lr</span><span class="o">.</span><span class="n">best_estimator_</span>
+<span class="n">nomes_lr</span> <span class="o">=</span> <span class="n">lr_est</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s2">"prep"</span><span class="p">]</span><span class="o">.</span><span class="n">get_feature_names_out</span><span class="p">()</span>
+<span class="n">coefs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">lr_est</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s2">"model"</span><span class="p">]</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">nomes_lr</span><span class="p">)</span>
+<span class="n">top_coef</span> <span class="o">=</span> <span class="n">coefs</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">coefs</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+<span class="n">display</span><span class="p">(</span><span class="n">top_coef</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">"coeficiente"</span><span class="p">)</span><span class="o">.</span><span class="n">to_frame</span><span class="p">())</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">top_coef</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s2">"barh"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="s2">"#2b5c8f"</span> <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">"#e07a5f"</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">top_coef</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"Regressão Logística: 10 maiores coeficientes (|valor|)"</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">"bold"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"Coeficiente (azul: aumenta P(&gt;50K) | laranja: diminui)"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>
+</details>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"></th>
+<th style="text-align: left;">coeficiente</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">cat__workclass_Missing</td>
+<td style="text-align: left;">-1.7752</td>
+</tr>
+<tr>
+<td style="text-align: left;">cat__relationship_Own-child</td>
+<td style="text-align: left;">-1.2661</td>
+</tr>
+<tr>
+<td style="text-align: left;">cat__native.country_Columbia</td>
+<td style="text-align: left;">-1.2353</td>
+</tr>
+<tr>
+<td style="text-align: left;">cat__sex_Female</td>
+<td style="text-align: left;">-1.2248</td>
+</tr>
+<tr>
+<td style="text-align: left;">cat__marital.status_Married-civ-spouse</td>
+<td style="text-align: left;">1.2076</td>
+</tr>
+<tr>
+<td style="text-align: left;">cat__occupation_Missing</td>
+<td style="text-align: left;">1.1653</td>
+</tr>
+<tr>
+<td style="text-align: left;">cat__marital.status_Never-married</td>
+<td style="text-align: left;">-1.1536</td>
+</tr>
+<tr>
+<td style="text-align: left;">cat__occupation_Priv-house-serv</td>
+<td style="text-align: left;">-1.1260</td>
+</tr>
+<tr>
+<td style="text-align: left;">cat__occupation_Other-service</td>
+<td style="text-align: left;">-1.1055</td>
+</tr>
+<tr>
+<td style="text-align: left;">cat__native.country_Cambodia</td>
+<td style="text-align: left;">1.0168</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="Regressão Logística: 10 maiores coeficientes" src="../assets/img/lr_coeficientes.png" /></p>
+<details class="example">
+<summary>Ver código</summary>
+<div class="highlight"><pre><span></span><code><span class="c1"># Diagnóstico da coluna occupation: "?" e o valor-lixo "occupation" viram NaN juntos. São grupos diferentes?</span>
+<span class="n">tipo_occ</span> <span class="o">=</span> <span class="n">X_train</span><span class="p">[</span><span class="s2">"occupation"</span><span class="p">]</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">X_train</span><span class="p">[</span><span class="s2">"occupation"</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s2">"?"</span><span class="p">,</span> <span class="s2">"occupation"</span><span class="p">]),</span> <span class="s2">"valor válido"</span><span class="p">)</span>
+<span class="n">tab</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">crosstab</span><span class="p">(</span><span class="n">tipo_occ</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="s2">"index"</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">tab</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"P(&lt;=50K)"</span><span class="p">,</span> <span class="s2">"P(&gt;50K)"</span><span class="p">]</span>
+<span class="n">tab</span><span class="p">[</span><span class="s2">"n"</span><span class="p">]</span> <span class="o">=</span> <span class="n">tipo_occ</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+<span class="n">display</span><span class="p">(</span><span class="n">tab</span><span class="p">)</span>
+</code></pre></div>
+</details>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"></th>
+<th style="text-align: left;">P(&lt;=50K)</th>
+<th style="text-align: left;">P(&gt;50K)</th>
+<th style="text-align: left;">n</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">?</td>
+<td style="text-align: left;">0.8980</td>
+<td style="text-align: left;">0.1020</td>
+<td style="text-align: left;">1432</td>
+</tr>
+<tr>
+<td style="text-align: left;">occupation</td>
+<td style="text-align: left;">0.4610</td>
+<td style="text-align: left;">0.5390</td>
+<td style="text-align: left;">1188</td>
+</tr>
+<tr>
+<td style="text-align: left;">valor válido</td>
+<td style="text-align: left;">0.7660</td>
+<td style="text-align: left;">0.2340</td>
+<td style="text-align: left;">22937</td>
+</tr>
+</tbody>
+</table>
+<p><strong>3.1 Análise das 3 features de maior |coeficiente| (Regressão Logística, L2, C = 1)</strong></p>
+<p>Coeficiente positivo aumenta o log-odds de <code>&gt;50K</code>; negativo o diminui. As três de maior magnitude:</p>
+<ol>
+<li><strong><code>workclass_Missing</code> (β = −1,775):</strong> ausência de classe de trabalho reduz fortemente a chance de <code>&gt;50K</code>. Coerente com a APS1: os registros <code>"?"</code> em <code>workclass</code> (1.778) tendem a ser pessoas fora do emprego formal, onde renda alta é rara.</li>
+<li><strong><code>relationship_Own-child</code> (β = −1,266):</strong> filhos que vivem com os pais concentram jovens em início de carreira ou estudantes (a idade mínima da base é 17), grupo com pouquíssimos casos de renda alta. O sinal é coerente com a EDA.</li>
+<li><strong><code>native.country_Columbia</code> (β = −1,235):</strong> esta é a feature menos confiável do ranking. Na APS1 vimos que há só 59 registros da Colômbia, quase todos <code>&lt;=50K</code>; o coeficiente grande reflete <strong>amostra pequena</strong> (dummy rara pouco encolhida pela regularização), não um efeito real da nacionalidade, e deve ser lido como associação, não causa.</li>
+</ol>
+<p><strong>Ressalvas importantes:</strong></p>
+<ul>
+<li>As dummies não estão na mesma escala das numéricas padronizadas, então comparar magnitudes é aproximado.</li>
+<li><code>occupation_Missing</code> tem sinal <strong>positivo</strong> (+1,165), oposto ao de <code>workclass_Missing</code>. Isso sugere colinearidade: os dois "Missing" se sobrepõem em parte e o modelo linear divide o efeito entre eles; além disso, <code>occupation = NaN</code> mistura dois grupos (valores <code>"?"</code> e o valor-lixo <code>"occupation"</code>), como mostra a tabela acima. O efeito líquido de "ocupação ausente" não deve ser lido isoladamente.</li>
+<li><code>sex_Female</code> (β = −1,225) é o 4º maior coeficiente: o modelo linear aprendeu a desigualdade de gênero presente nos dados, ponto retomado na Seção 4.</li>
+</ul>
+<h2 id="32-modelo-ensemble-3-features-de-maior-importancia">3.2 Modelo ensemble: 3 features de maior importância<a class="headerlink" href="#32-modelo-ensemble-3-features-de-maior-importancia" title="Permanent link">&para;</a></h2>
+<p>Usamos a Random Forest otimizada da Seção 1.2 (<code>feature_importances_</code>, baseada na redução média de impureza).</p>
+<details class="example">
+<summary>Ver código</summary>
+<div class="highlight"><pre><span></span><code><span class="n">rf_est</span> <span class="o">=</span> <span class="n">rs_rf</span><span class="o">.</span><span class="n">best_estimator_</span>
+<span class="n">nomes_rf</span> <span class="o">=</span> <span class="n">rf_est</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s2">"prep"</span><span class="p">]</span><span class="o">.</span><span class="n">get_feature_names_out</span><span class="p">()</span>
+<span class="n">imp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">rf_est</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s2">"model"</span><span class="p">]</span><span class="o">.</span><span class="n">feature_importances_</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">nomes_rf</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">display</span><span class="p">(</span><span class="n">imp</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">"importância"</span><span class="p">)</span><span class="o">.</span><span class="n">to_frame</span><span class="p">())</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">imp</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s2">"barh"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#2b5c8f"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"Random Forest: 10 features mais importantes"</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">"bold"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"Importância (redução média de impureza)"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>
+</details>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"></th>
+<th style="text-align: left;">importância</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">num__education.num</td>
+<td style="text-align: left;">0.1854</td>
+</tr>
+<tr>
+<td style="text-align: left;">num__age</td>
+<td style="text-align: left;">0.1520</td>
+</tr>
+<tr>
+<td style="text-align: left;">fnlwgt__fnlwgt</td>
+<td style="text-align: left;">0.1383</td>
+</tr>
+<tr>
+<td style="text-align: left;">cat__marital.status_Married-civ-spouse</td>
+<td style="text-align: left;">0.1365</td>
+</tr>
+<tr>
+<td style="text-align: left;">cat__relationship_Husband</td>
+<td style="text-align: left;">0.1028</td>
+</tr>
+<tr>
+<td style="text-align: left;">cat__marital.status_Never-married</td>
+<td style="text-align: left;">0.0345</td>
+</tr>
+<tr>
+<td style="text-align: left;">cat__occupation_Exec-managerial</td>
+<td style="text-align: left;">0.0237</td>
+</tr>
+<tr>
+<td style="text-align: left;">cat__relationship_Wife</td>
+<td style="text-align: left;">0.0195</td>
+</tr>
+<tr>
+<td style="text-align: left;">cat__occupation_Prof-specialty</td>
+<td style="text-align: left;">0.0192</td>
+</tr>
+<tr>
+<td style="text-align: left;">cat__occupation_Missing</td>
+<td style="text-align: left;">0.0124</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="Random Forest: 10 features mais importantes" src="../assets/img/rf_importancia.png" /></p>
+<p><strong>3.2 Análise das 3 features de maior importância (Random Forest v1, impureza/MDI)</strong></p>
+<p>Esta análise usa a RF otimizada da Seção 1.2 (v1, que ainda contém <code>fnlwgt</code>), o que permite discutir o efeito dessa variável.</p>
+<ol>
+<li><strong><code>education.num</code> (0,185):</strong> anos de estudo são o principal divisor: níveis superiores concentram a renda <code>&gt;50K</code> e níveis baixos a evitam.</li>
+<li><strong><code>age</code> (0,152):</strong> a chance de <code>&gt;50K</code> é baixa em jovens, cresce até a meia-idade (≈ 35–55 anos, pela EDA) e cai perto da aposentadoria. As árvores capturam essa relação não linear com vários cortes.</li>
+<li><strong><code>fnlwgt</code> (0,138):</strong> aparece em 3º lugar, mas <strong>a importância é espúria</strong>. É um peso amostral sem sentido causal, e removê-lo não alterou o F1 (Seção 1.3). O MDI favorece variáveis contínuas com muitos valores distintos (Strobl et al., 2007), pois elas oferecem muitos pontos de corte que "reduzem impureza" no treino. A primeira feature genuinamente informativa depois de <code>age</code> é <code>marital.status_Married-civ-spouse</code> (0,136), seguida de <code>relationship_Husband</code> (0,103).</li>
+</ol>
+<p>A análise SHAP do modelo final (v2), na Seção 3.3, confirma que, sem <code>fnlwgt</code>, a hierarquia passa a ser <code>education.num</code>, <code>Married-civ-spouse</code> e <code>age</code>.</p>
+<h2 id="33-shap-no-melhor-modelo">3.3 SHAP no melhor modelo<a class="headerlink" href="#33-shap-no-melhor-modelo" title="Permanent link">&para;</a></h2>
+<p>SHAP atribui a cada feature uma contribuição (em valor de SHAP) para cada predição, com base em valores de Shapley da teoria dos jogos. Há duas leituras: <strong>global</strong> (importância média das features no conjunto) e <strong>local</strong> (por que <em>esta</em> pessoa foi classificada assim). Usamos uma amostra de 300 linhas do teste para manter o tempo de execução razoável. O explicador é escolhido conforme o modelo final (<code>TreeExplainer</code> para árvores, <code>LinearExplainer</code> para a logística).</p>
+<details class="example">
+<summary>Ver código</summary>
+<div class="highlight"><pre><span></span><code><span class="n">prep_f</span> <span class="o">=</span> <span class="n">modelo_final</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s2">"prep"</span><span class="p">]</span>
+<span class="n">clf_f</span> <span class="o">=</span> <span class="n">modelo_final</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s2">"model"</span><span class="p">]</span>
+<span class="n">nomes_f</span> <span class="o">=</span> <span class="n">prep_f</span><span class="o">.</span><span class="n">get_feature_names_out</span><span class="p">()</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">to_dense</span><span class="p">(</span><span class="n">M</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">M</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="s2">"toarray"</span><span class="p">)</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
+
+<span class="c1"># Amostra do teste (já transformada pelo pré-processador do modelo final)</span>
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="n">RANDOM_STATE</span><span class="p">)</span>
+<span class="n">pos</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X_test_proc</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">X_s</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">to_dense</span><span class="p">(</span><span class="n">prep_f</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test_proc</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">pos</span><span class="p">])),</span> <span class="n">columns</span><span class="o">=</span><span class="n">nomes_f</span><span class="p">)</span>
+<span class="n">y_s</span> <span class="o">=</span> <span class="n">y_te</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span>
+<span class="n">pred_s</span> <span class="o">=</span> <span class="n">clf_f</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_s</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">clf_f</span><span class="p">,</span> <span class="n">LogisticRegression</span><span class="p">):</span>
+    <span class="n">fundo</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">to_dense</span><span class="p">(</span><span class="n">prep_f</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_train_proc</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span><span class="p">))),</span> <span class="n">columns</span><span class="o">=</span><span class="n">nomes_f</span><span class="p">)</span>
+    <span class="n">explainer</span> <span class="o">=</span> <span class="n">shap</span><span class="o">.</span><span class="n">LinearExplainer</span><span class="p">(</span><span class="n">clf_f</span><span class="p">,</span> <span class="n">fundo</span><span class="p">)</span>
+    <span class="n">sv</span> <span class="o">=</span> <span class="n">explainer</span><span class="p">(</span><span class="n">X_s</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">explainer</span> <span class="o">=</span> <span class="n">shap</span><span class="o">.</span><span class="n">TreeExplainer</span><span class="p">(</span><span class="n">clf_f</span><span class="p">)</span>
+    <span class="n">sv</span> <span class="o">=</span> <span class="n">explainer</span><span class="p">(</span><span class="n">X_s</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">sv</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>          <span class="c1"># classificadores de árvore retornam 1 mapa por classe</span>
+        <span class="n">sv</span> <span class="o">=</span> <span class="n">sv</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span>             <span class="c1"># usamos a classe positiva (&gt;50K)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Explicações calculadas:"</span><span class="p">,</span> <span class="n">sv</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</code></pre></div>
+</details>
+<div class="highlight"><pre><span></span><code>Explicações calculadas: (300, 88)
+</code></pre></div>
+<details class="example">
+<summary>Ver código</summary>
+<div class="highlight"><pre><span></span><code><span class="c1"># Importância global: valores de SHAP em todas as amostras</span>
+<span class="n">shap</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">beeswarm</span><span class="p">(</span><span class="n">sv</span><span class="p">,</span> <span class="n">max_display</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"SHAP: impacto de cada feature na previsão de &gt;50K"</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">"bold"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">shap</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">sv</span><span class="p">,</span> <span class="n">max_display</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"SHAP: importância global (média do |valor|)"</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">"bold"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>
+</details>
+<p><img alt="SHAP beeswarm" src="../assets/img/shap_beeswarm.png" /></p>
+<p><img alt="SHAP importância global" src="../assets/img/shap_barras.png" /></p>
+<p><strong>3.3 Análise global com SHAP (Random Forest v2, 300 casos de teste)</strong></p>
+<p>SHAP (Lundberg &amp; Lee, 2017) decompõe cada predição em contribuições por feature. Valor à direita de zero aumenta a probabilidade prevista de <code>&gt;50K</code>; à esquerda, diminui. Nas dummies, vermelho = categoria presente.</p>
+<p><strong>Importância global (média do |SHAP|):</strong></p>
+<ol>
+<li><strong><code>education.num</code> (0,09):</strong> mais anos de estudo empurram para <code>&gt;50K</code>; poucos anos, para <code>&lt;=50K</code>.</li>
+<li><strong><code>marital.status_Married-civ-spouse</code> (0,08):</strong> casado no civil (vermelho) desloca a predição para <code>&gt;50K</code>; não casado, para <code>&lt;=50K</code>.</li>
+<li><strong><code>age</code> (0,05):</strong> efeito não linear: jovens (azul) têm contribuição negativa; idades intermediárias e mais altas, positiva.</li>
+<li><strong><code>relationship_Husband</code> (0,05):</strong> complementa o estado civil.</li>
+<li><strong><code>Exec-managerial</code> e <code>Never-married</code> (0,02):</strong> ocupação executiva aumenta a chance; nunca ter casado reduz.</li>
+</ol>
+<p><strong>Pontos de atenção:</strong></p>
+<ul>
+<li><code>occupation_Missing</code> tem efeito <strong>positivo</strong> (vermelho à direita), contraintuitivo à primeira vista. Como <code>occupation = NaN</code> agrupa o valor-lixo <code>"occupation"</code> e os <code>"?"</code>, o sinal reflete a composição desses grupos, não "não informar ocupação" em si; o SHAP é fiel ao modelo, e o modelo é fiel a um dado com problema de qualidade (Seção 4.2).</li>
+<li>O ranking é parcialmente consistente com 3.1: ambos destacam estado civil e relações familiares. Mas a LogReg dá grande peso a categorias raras (<code>Columbia</code>, β ≈ −1,2), ausentes do top do SHAP, onde o impacto é ponderado pela frequência. Para o ranking de MDI (3.2), o SHAP remove o artefato do <code>fnlwgt</code> e coloca <code>Married-civ-spouse</code> à frente de <code>age</code>.</li>
+<li><code>sex_Male</code> aparece entre as 12 maiores (≈ 0,01): impacto pequeno, mas não nulo, relevante para a discussão de equidade.</li>
+</ul>
+<details class="example">
+<summary>Ver código</summary>
+<div class="highlight"><pre><span></span><code><span class="c1"># Três casos individuais variados: um acerto de &gt;50K, um acerto de &lt;=50K e um erro</span>
+<span class="n">idx_tp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">y_s</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">pred_s</span> <span class="o">==</span> <span class="mi">1</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">idx_tn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">y_s</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">pred_s</span> <span class="o">==</span> <span class="mi">0</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">idx_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">y_s</span> <span class="o">!=</span> <span class="n">pred_s</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">casos</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"Acerto: previsto &gt;50K (real &gt;50K)"</span><span class="p">:</span> <span class="n">idx_tp</span><span class="p">,</span>
+         <span class="s2">"Acerto: previsto &lt;=50K (real &lt;=50K)"</span><span class="p">:</span> <span class="n">idx_tn</span><span class="p">,</span>
+         <span class="sa">f</span><span class="s2">"Erro: previsto </span><span class="si">{</span><span class="s1">'&gt;50K'</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">pred_s</span><span class="p">[</span><span class="n">idx_err</span><span class="p">]</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">'&lt;=50K'</span><span class="si">}</span><span class="s2"> (real </span><span class="si">{</span><span class="s1">'&gt;50K'</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">y_s</span><span class="p">[</span><span class="n">idx_err</span><span class="p">]</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">'&lt;=50K'</span><span class="si">}</span><span class="s2">)"</span><span class="p">:</span> <span class="n">idx_err</span><span class="p">}</span>
+
+<span class="k">for</span> <span class="n">titulo</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">casos</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">70</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">titulo</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">X_test_proc</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">pos</span><span class="p">[</span><span class="n">i</span><span class="p">]][[</span><span class="s2">"age"</span><span class="p">,</span> <span class="s2">"workclass"</span><span class="p">,</span> <span class="s2">"education.num"</span><span class="p">,</span> <span class="s2">"marital.status"</span><span class="p">,</span> <span class="s2">"occupation"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">]]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+    <span class="n">shap</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">waterfall</span><span class="p">(</span><span class="n">sv</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">max_display</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">titulo</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">"bold"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>
+</details>
+<div class="highlight"><pre><span></span><code>======================================================================
+Acerto: previsto &gt;50K (real &gt;50K)
+{'age': 33, 'workclass': 'Private', 'education.num': 16, 'marital.status': 'Divorced', 'occupation': nan, 'sex': 'Male'}
+</code></pre></div>
+<p><img alt="Waterfall: verdadeiro positivo" src="../assets/img/waterfall_vp.png" /></p>
+<div class="highlight"><pre><span></span><code>======================================================================
+Acerto: previsto &lt;=50K (real &lt;=50K)
+{'age': 48, 'workclass': 'Private', 'education.num': 10, 'marital.status': 'Divorced', 'occupation': 'Other-service', 'sex': 'Female'}
+</code></pre></div>
+<p><img alt="Waterfall: verdadeiro negativo" src="../assets/img/waterfall_vn.png" /></p>
+<div class="highlight"><pre><span></span><code>======================================================================
+Erro: previsto &gt;50K (real &lt;=50K)
+{'age': 52, 'workclass': 'Private', 'education.num': 11, 'marital.status': 'Married-civ-spouse', 'occupation': 'Exec-managerial', 'sex': 'Male'}
+</code></pre></div>
+<p><img alt="Waterfall: falso positivo" src="../assets/img/waterfall_fp.png" /></p>
+<p><strong>3.4 Análise local com SHAP (waterfall)</strong></p>
+<p>Valor base E[f(X)] = 0,24 (prevalência de <code>&gt;50K</code>). Barras vermelhas somam probabilidade; azuis subtraem. Os valores numéricos nos eixos (ex.: <code>education.num = 2,322</code>) estão <strong>padronizados</strong>; o valor original aparece no dicionário impresso acima de cada gráfico.</p>
+<p><strong>Caso 1: verdadeiro positivo (33 anos, Divorced, 16 anos de estudo, Private, ocupação ausente) → f(x) = 0,624</strong></p>
+<ul>
+<li><strong><code>education.num</code> (+0,38):</strong> sozinha leva a predição de 0,24 a ≈ 0,62; a escolaridade (16 anos) domina o caso.</li>
+<li><strong><code>occupation_Missing</code> (+0,05), <code>age</code> (+0,03), <code>Never-married = 0</code> (+0,02), <code>sex_Male</code> (+0,02):</strong> contribuições positivas pequenas.</li>
+<li><strong><code>Married-civ-spouse = 0</code> (−0,08) e <code>Husband = 0</code> (−0,06):</strong> ser divorciado "puxa para baixo".</li>
+<li><strong>Leitura:</strong> acerto sustentado por uma única feature forte contra dois sinais negativos. A probabilidade (0,62) é só moderadamente maior que 0,5, ou seja, o modelo acerta, mas sem folga.</li>
+</ul>
+<p><strong>Caso 2: verdadeiro negativo (48 anos, Divorced, Other-service, 10 anos de estudo, mulher) → f(x) = 0,008</strong></p>
+<ul>
+<li><strong><code>Married-civ-spouse = 0</code> (−0,08), <code>Husband = 0</code> (−0,06), <code>occupation_Other-service</code> (−0,06):</strong> os três maiores empurrões negativos.</li>
+<li><strong><code>education.num</code> (−0,02), <code>sex_Male = 0</code> e <code>sex_Female = 1</code> (−0,01 cada):</strong> reforçam o sinal.</li>
+<li><strong><code>age</code> (+0,04):</strong> único contribuinte positivo relevante (48 anos está na faixa produtiva).</li>
+<li><strong>Leitura:</strong> várias características convergem para <code>&lt;=50K</code> e a predição é muito confiante. Note que <code>sex_Female</code> contribui negativamente, o que reforça a preocupação de equidade (Seção 4.1).</li>
+</ul>
+<p><strong>Caso 3: erro, falso positivo (52 anos, Married-civ-spouse, Husband, Exec-managerial, Private; real <code>&lt;=50K</code>) → f(x) = 0,698</strong></p>
+<ul>
+<li><strong><code>Married-civ-spouse</code> (+0,12), <code>Exec-managerial</code> (+0,11), <code>age</code> (+0,07), <code>Husband</code> (+0,07):</strong> o perfil reúne os principais marcadores de renda alta aprendidos pelo modelo (Seção 3.3), por isso a predição passa de 0,5.</li>
+<li><strong>Por que errou:</strong> as features disponíveis não distinguem este indivíduo dos muitos executivos casados que de fato ganham <code>&gt;50K</code>. Variáveis ausentes da base (<code>hours-per-week</code>, <code>capital-gain</code>, porte da empresa) provavelmente explicariam a diferença. Trata-se de erro irredutível com os dados atuais, não de uma falha de lógica do modelo; é um dos 378 falsos positivos da matriz de confusão.</li>
+<li><strong>Observação:</strong> em um uso real, esse caso mostra por que a probabilidade (0,70, não 0,99) deve ser reportada junto ao rótulo.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Voltar para o topo
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.top", "toc.follow", "content.code.copy", "search.highlight"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "mais 1 nesta p\u00e1gina", "search.result.more.other": "# mais nesta p\u00e1gina", "search.result.none": "Nenhum documento encontrado", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
