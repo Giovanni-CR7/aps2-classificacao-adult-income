@@ -1,0 +1,44 @@
+site_name: APS2 — Classificação | Adult Income Census
+site_description: Classificação de renda (>50K / <=50K) com Regressão Logística e Random Forest, avaliação e explicabilidade (SHAP).
+site_author: Hector Mathias e Giovanni Rodrigues
+site_url: https://Giovanni-CR7.github.io/aps2-classificacao-adult-income/
+repo_url: https://github.com/Giovanni-CR7/aps2-classificacao-adult-income
+docs_dir: docs
+theme:
+  name: material
+  language: pt-BR
+  features:
+    - navigation.tabs
+    - navigation.top
+    - toc.follow
+    - content.code.copy
+    - search.highlight
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      toggle: {icon: material/weather-night, name: Modo escuro}
+    - media: "(prefers-color-scheme: slate)"
+      scheme: slate
+      primary: indigo
+      toggle: {icon: material/weather-sunny, name: Modo claro}
+nav:
+  - Início: index.md
+  - Dados e métrica: dados.md
+  - Modelos: modelos.md
+  - Avaliação no teste: avaliacao.md
+  - Interpretabilidade: interpretabilidade.md
+  - Discussão crítica: discussao.md
+  - Referências: referencias.md
+markdown_extensions:
+  - admonition
+  - tables
+  - toc:
+      permalink: true
+  - attr_list
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.arithmatex:
+      generic: true
+extra_javascript:
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
